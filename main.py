@@ -1,37 +1,40 @@
 import subprocess
 import os
 
+from classes.Menu import Menu
+from classes.Tailwind import Tailwind
+
+
 def main():
-    start_dir = input("Root directory of Angular project (Full path): ")
-    tailwind_init(start_dir)
-    fontawesome_init(start_dir)
-    print('DONE!')
+    intro()
+    print("[STEP 2] Install styling framework")
+    options = ["Install TailwindCSS"]
+    main_menu = Menu(options)
+    option = main_menu.ask_menu()
+    match option:
+        case "0":
+            print("Install TailwindCSS")
 
 
-def tailwind_init(start_dir):
-    # npm install TailwindCSS for Angular
-    tailwind_init_step1 = subprocess.Popen(['npm', 'install', '-D', 'tailwindcss', 'postcss', 'autoprefixer'], cwd=start_dir, shell=True)
-    tailwind_init_step1.wait()
-    os.system("cls")
+def intro():
+    print("*** AngularToolkit v2.0 ***")
+    print("[STEP 1] Create new angular project")
+    finished = False
+    while finished is False:
+        ask = input("Do you want to create a new angular project? (y/n): ")
+        if ask == "y":
+            project_dir = input("New angular project directory (full path): ")
+            project_name = input("Project name: ").lower().strip()
+            subprocess.Popen(['ng', 'new', f'{project_name}'], cwd=project_dir, shell=True).wait()
+        elif ask == "n":
+            print("Skipping installation...")
+            finished = True
+        else:
+            finished = False
 
-    # Generate TailwindCSS config file
-    tailwind_init_step2 = subprocess.Popen(['npx', 'tailwindcss', 'init'], cwd=start_dir, shell=True)
-    tailwind_init_step2.wait()
-    os.system("cls")
 
-    # Overwrite config file with preset config
-    with open('tailwind.config.js', 'r') as file:
-        config_data = file.read()
-    with open(f'{start_dir}\\tailwind.config.js', 'w') as file:
-        file.write(config_data)
-    os.system("cls")
-
-    # Overwrite angular styles.css file with preset css file
-    with open('styles.css', 'r') as file:
-        css_data = file.read()
-    with open(f'{start_dir}\\src\\styles.css', 'w') as file:
-        file.write(css_data)
-    os.system("cls")
+def tailwind_init():
+    Tailwind()
 
 
 def fontawesome_init(start_dir):
@@ -70,7 +73,7 @@ def fontawesome_init(start_dir):
     fontawesome_init_iconservice.wait()
     os.system("cls")
 
-    with open('icon.service.ts', 'r') as file:
+    with open('presets/icon.service.ts', 'r') as file:
         icon_service_data = file.read()
     with open(f'{start_dir}\\src\\app\\services\\icon.service.ts', 'w') as file:
         file.write(icon_service_data)
